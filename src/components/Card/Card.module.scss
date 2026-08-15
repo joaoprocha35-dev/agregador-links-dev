@@ -1,0 +1,120 @@
+// Aqui eu importo as variáveis de cores e mixins para manter a consistência do design.
+@use '../../styles/variables' as vars;
+@use '../../styles/mixins' as mix;
+
+// Aqui eu configuro a estrutura principal do Card.
+.card {
+  // Diferente da versão anterior, eu retiro o padding daqui e passo pro contentWrapper, 
+  // para que a imagem de fundo consiga tocar e preencher as bordas do card.
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  min-height: 220px; // Altura mínima para garantir que mostre um bom pedaço da imagem
+  cursor: pointer;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+
+  // Aqui eu configuro o que acontece quando o usuário passa o mouse por cima (hover).
+  &:hover {
+    // O card sobe levemente.
+    transform: translateY(-4px);
+
+    // Se o card for da categoria ciano, a borda e o brilho ficam cianos.
+    &.cyan {
+      border-color: rgba(vars.$neon-cyan, 0.5);
+      @include mix.neon-glow(vars.$neon-cyan, 15px);
+    }
+    
+    // Se for roxo, brilho roxo.
+    &.purple {
+      border-color: rgba(vars.$neon-purple, 0.5);
+      @include mix.neon-glow(vars.$neon-purple, 15px);
+    }
+    
+    // Se for âmbar, brilho âmbar.
+    &.amber {
+      border-color: rgba(vars.$neon-amber, 0.5);
+      @include mix.neon-glow(vars.$neon-amber, 15px);
+    }
+
+    // Aqui eu faço a imagem de fundo dar um leve zoom para criar um efeito mais imersivo.
+    .bgImage {
+      transform: scale(1.05);
+    }
+
+    // Animação para a setinha ir um pouco para a direita ao passar o mouse.
+    .iconContainer {
+      color: vars.$text-primary;
+      transform: translateX(4px);
+    }
+  }
+}
+
+// Aqui eu configuro a imagem para cobrir o fundo do card perfeitamente.
+.bgImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; // Garante que a imagem não amasse, apenas corte as sobras.
+  z-index: 1;
+  transition: transform 0.5s ease;
+}
+
+// Esta é a película escura que fica por cima da imagem para garantir a leitura clara dos textos.
+.overlay {
+  position: absolute;
+  inset: 0;
+  // Degradê: começa levemente transparente no topo e fica escuro (85% preto) na parte de baixo.
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%);
+  z-index: 2;
+}
+
+// Aqui eu configuro o container que segura os textos e ícones acima da imagem e do fundo escuro.
+.contentWrapper {
+  position: relative;
+  z-index: 3; // O z-index 3 garante que tudo aqui dentro fique acima da imagem (1) e do overlay (2).
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  min-height: 220px;
+  padding: 24px; // O padding que era da tag pai (.card) agora vive aqui.
+}
+
+// Alinhamento do topo do card (onde fica o Badge e o ícone de seta).
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+// Estado inicial do ícone de setinha.
+.iconContainer {
+  color: vars.$text-secondary;
+  transition: all 0.3s ease;
+}
+
+// Textos principais do card.
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .subtitulo {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .titulo {
+    font-size: 22px;
+    color: vars.$text-primary;
+    font-weight: 700;
+    margin: 0;
+  }
+}

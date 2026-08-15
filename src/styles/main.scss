@@ -1,0 +1,25 @@
+@use 'bootstrap/scss/bootstrap-grid' as *;
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: vars.$bg-dark;
+  color: vars.$text-primary;
+  font-family: vars.$font-family;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

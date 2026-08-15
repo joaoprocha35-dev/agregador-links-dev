@@ -1,0 +1,19 @@
+@use 'variables' as *;
+
+@mixin glassmorphism($blur: 24px) {
+  background: $card-bg;
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+  border: 1px solid $card-border;
+}
+
+@mixin neon-glow($color, $intensity: 15px) {
+  box-shadow: 0 0 $intensity rgba($color, 0.35);
+}
+
+@mixin flex-center($direction: row) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: center;
+  align-items: center;
+}

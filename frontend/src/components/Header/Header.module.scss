@@ -1,0 +1,72 @@
+@use '../../styles/variables' as vars;
+@use '../../styles/mixins' as mix;
+
+// Alinho os componentes de apresentação centralizados no topo
+.header {
+  @include mix.flex-center(column);
+  padding: 40px 20px 20px 20px;
+  text-align: center;
+  gap: 14px;
+
+  // Envolvo a imagem aplicando contorno de neon
+  .avatarContainer {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    padding: 3px;
+    border: 2px solid vars.$neon-cyan;
+    @include mix.neon-glow(vars.$neon-cyan, 20px);
+
+    .avatarImg {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  // Estilizo o texto do meu nome
+  .nome {
+    font-size: 24px;
+    font-weight: 700;
+    color: vars.$text-primary;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+
+  // Agrupo a tag para animação do GSAP
+  .cargoWrapper {
+    display: inline-block;
+  }
+
+  // Organizo as conexões em linha
+  .socialNav {
+    @include mix.flex-center(row);
+    gap: 12px;
+    margin-top: 6px;
+
+    // Destaco as redes no passar do mouse
+    .socialLink {
+      border-radius: 12px;
+      @include mix.flex-center;
+      color: vars.$text-secondary;
+      padding: 6px;
+
+      // Movemos a transição para o SVG para não conflitar com o GSAP
+      svg {
+        transition: transform 0.25s ease, filter 0.25s ease;
+      }
+
+      &:hover {
+        color: vars.$neon-cyan;
+        
+        svg {
+          transform: translateY(-4px) scale(1.08);
+          filter: drop-shadow(0px 4px 10px rgba(255, 255, 255, 0.25));
+        }
+      }
+    }
+  }
+}

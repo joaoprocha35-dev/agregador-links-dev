@@ -1,0 +1,260 @@
+// Importo minhas variáveis de cores neons e os utilitários de mixin
+@use '../../styles/variables' as vars;
+@use '../../styles/mixins' as mix;
+
+// Escureço e desfoco o plano de fundo para destacar o cartão
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+// Estruturo o painel flutuante inferior com limite de altura
+.bottomSheet {
+  width: 100%;
+  max-width: 600px;
+  background: vars.$bg-dark;
+  border-radius: 24px 24px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: none;
+  padding: 32px 24px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  // Destaco o topo com tom azul ciano e resplendor neon para sistemas B2B
+  &.cyan {
+    border-top: 2px solid vars.$neon-cyan;
+    box-shadow: 0 -10px 30px rgba(0, 240, 255, 0.25);
+
+    .botoes a.btnPrincipal {
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      background: rgba(0, 240, 255, 0.08);
+      color: vars.$neon-cyan;
+
+      svg {
+        color: vars.$neon-cyan;
+      }
+
+      &:hover {
+        background: rgba(0, 240, 255, 0.18);
+        border-color: vars.$neon-cyan;
+        box-shadow: 0 0 16px rgba(0, 240, 255, 0.35);
+      }
+    }
+  }
+
+  // Personalizo a borda violeta com brilho suave para trabalhos autorais
+  &.purple {
+    border-top: 2px solid vars.$neon-purple;
+    box-shadow: 0 -10px 30px rgba(112, 0, 255, 0.25);
+
+    .botoes a.btnPrincipal {
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      background: rgba(112, 0, 255, 0.1);
+      color: #c084fc;
+
+      svg {
+        color: #c084fc;
+      }
+
+      &:hover {
+        background: rgba(112, 0, 255, 0.22);
+        border-color: #a855f7;
+        box-shadow: 0 0 16px rgba(112, 0, 255, 0.4);
+      }
+    }
+  }
+
+  // Aplico o acabamento dourado vibrante na aba de conceitos e protótipos
+  &.amber {
+    border-top: 2px solid vars.$neon-amber;
+    box-shadow: 0 -10px 30px rgba(255, 184, 0, 0.25);
+
+    .botoes a.btnPrincipal {
+      border: 1px solid rgba(255, 184, 0, 0.35);
+      background: rgba(255, 184, 0, 0.08);
+      color: vars.$neon-amber;
+
+      svg {
+        color: vars.$neon-amber;
+      }
+
+      &:hover {
+        background: rgba(255, 184, 0, 0.18);
+        border-color: vars.$neon-amber;
+        box-shadow: 0 0 16px rgba(255, 184, 0, 0.35);
+      }
+    }
+  }
+
+  // Ajusto os espaçamentos internos para visores menores
+  @media (max-width: 600px) {
+    padding: 24px 16px;
+    max-height: 90vh;
+    border-radius: 20px 20px 0 0;
+  }
+}
+
+// Alinho o gatilho circular de fechamento no canto do topo
+.closeButton {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: vars.$text-secondary;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: vars.$text-primary;
+  }
+
+  @media (max-width: 600px) {
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+// Formato os títulos das seções com suporte responsivo
+.header {
+  margin-bottom: 8px;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: vars.$text-primary;
+    margin-bottom: 4px;
+
+    @media (max-width: 480px) {
+      font-size: 20px;
+    }
+  }
+
+  p {
+    font-size: 14px;
+    color: vars.$text-secondary;
+
+    @media (max-width: 480px) {
+      font-size: 13px;
+    }
+  }
+}
+
+// Configuro a apresentação de cada item com estilo de vidro fosco
+.projetoItem {
+  @include mix.glassmorphism(12px);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  // Garanto a proporção da imagem sem perder o enquadramento
+  .imagem {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+
+    @media (max-width: 480px) {
+      height: 150px;
+    }
+  }
+
+  .conteudo {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    @media (max-width: 480px) {
+      padding: 16px;
+    }
+
+    h3 {
+      font-size: 18px;
+      color: vars.$text-primary;
+      font-weight: 600;
+
+      @media (max-width: 480px) {
+        font-size: 16px;
+      }
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    // Gerencio a disposição das ligações para evitar quebra de layout em smartphones
+    .botoes {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+
+      @media (max-width: 480px) {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      // Estilizo a estrutura base comum aos botões
+      a {
+        flex: 1;
+        @include mix.flex-center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.05);
+        color: vars.$text-primary;
+        transition: all 0.2s ease;
+        text-align: center;
+        white-space: nowrap;
+
+        svg {
+          flex-shrink: 0;
+        }
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        // Aplico realce em tom verde escuro para a opção de conversão
+        &.whatsapp {
+          border: 1px solid rgba(37, 211, 102, 0.35);
+          background: rgba(37, 211, 102, 0.08);
+          color: #25D366;
+
+          svg {
+            color: #25D366;
+          }
+
+          &:hover {
+            background: rgba(37, 211, 102, 0.18);
+            border-color: #25D366;
+            box-shadow: 0 0 16px rgba(37, 211, 102, 0.35);
+          }
+        }
+      }
+    }
+  }
+}

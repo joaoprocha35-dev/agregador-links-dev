@@ -6,7 +6,8 @@ class TecnologiaBase(BaseModel):
     nome: str
 
 # Schema usado ao enviar uma nova Tecnologia para ser criada
-class TecnologiaCreate(TecnologiaBase):
+class TecnologiaCreate(TecnologiaBase): # dentro dos parenteses eu pego tudo o que tem dentro de TecnologiaBase + o BaseModel, que é a classe mãe de todos os shemas do Pydantic: viscalizador de Jons
+    
     pass 
 
 # Schema completo retornado pela API (inclui IDs do banco)
@@ -14,6 +15,7 @@ class Tecnologia(TecnologiaBase):
     id: int
     projeto_id: int
 
+    #recebe os dados do banco e converte os atributos para Json automaticamente
     model_config = ConfigDict(from_attributes=True)
 
 # Schema base com os campos comuns de Projeto

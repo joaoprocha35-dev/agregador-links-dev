@@ -106,9 +106,13 @@ Fase 3: Construção da API (FastAPI)
 
 [x] Configuração do venv e instalação de dependências no Python.
 
-[ ] Conexão do SQLAlchemy com o MySQL local.
+[x] Conexão do SQLAlchemy com o MySQL local.
 
-[ ] Mapeamento das rotas públicas GET.
+[x] Mapeamento das rotas públicas GET.
+
+[x] Mapeamento da rota de criação POST (`/api/projetos`)
+
+[x] Teste e validação de endpoints via Swagger UI (`/docs`).
 
 Fase 4: Segurança & Autenticação
 

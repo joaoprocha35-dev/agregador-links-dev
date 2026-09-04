@@ -8,15 +8,15 @@ Este documento é o registro de fixação técnica dos conceitos, arquiteturas e
 
 - [x] **Monorepo e Separação de Responsabilidades**
   * **Conceito:** Organização do projeto isolando o `frontend/` (React) e `backend/` (FastAPI) em um único repositório, mantendo configurações globais (`.gitignore`, documentações) na raiz.
-  * **OBS:** *[Escreva aqui com suas palavras o que você entendeu sobre manter front e back separados]*
+  * **OBS:** *[Fiz essa estrutura para que eu mesmo pode-se ver minha evolução e ver o que eu já aprendi.]*
 
 - [x] **Ambiente Virtual Python (`venv`)**
   * **Conceito:** Criar uma "caixa" isolada de bibliotecas Python para impedir conflitos globais de versão no sistema operacional e facilitar o deploy.
-  * **OBS:** *[Escreva aqui com suas palavras a importância do venv e a comparação com o node_modules]*
+  * **OBS:** *[Confesso que essa parte foi muita confusa para mim, mas depois eu compreendi a importância dela]*
 
 - [x] **Segurança de Arquivos e `.gitignore`**
   * **Conceito:** Proteger credenciais (`.env`), pastas pesadas de dependências e arquivos temporários de cache antes de subir para o GitHub.
-  * **OBS:** *[Escreva aqui por que não devemos subir a node_modules nem o .env]*
+  * **OBS:** *[Aqui eu já sabia que tinha que ter essa segurança para não fazar dados sensíveis ao github]*
 
 ---
 
@@ -24,15 +24,12 @@ Este documento é o registro de fixação técnica dos conceitos, arquiteturas e
 
 - [x] **Criação de Banco Isolado (`CREATE DATABASE`)**
   * **Conceito:** Separar a base do Dev Hub de outros projetos para garantir autonomia dos dados.
-  * **OBS:** *[Escreva aqui por que usamos o banco dev_hub]*
 
 - [x] **Tipos de Dados e Restrições (`VARCHAR`, `TEXT`, `UNIQUE`, `NOT NULL`)**
   * **Conceito:** Definir o tamanho e as regras de cada coluna para evitar dados corrompidos e otimizar espaço de armazenamento.
-  * **OBS:** *[Escreva aqui o que você aprendeu sobre a diferença de VARCHAR e TEXT, e para que serve o UNIQUE]*
 
 - [x] **Relacionamento entre Tabelas (`FOREIGN KEY` e `ON DELETE CASCADE`)**
   * **Conceito:** Conectar a tabela `tecnologias` à tabela `projetos` e garantir a exclusão automática de dependências quando um projeto for apagado.
-  * **OBS:** *[Escreva aqui o que o ON DELETE CASCADE faz na prática]*
 
 - [x] **Script de Carga Inicial (`Seed Data`)**
   * **Conceito:** Inserir dados padrão de teste no banco para validar se a comunicação com a API e com o Front-end funcionará.
@@ -65,6 +62,8 @@ Este documento é o registro de fixação técnica dos conceitos, arquiteturas e
 - [ ] **Rotas RESTful no FastAPI (GET, POST, PUT, DELETE)**
   * **Conceito:** Mapear operações de leitura e escrita via protocolo HTTP.
   * **OBS:** *[Pendente]*
+
+- [x] **Testes manuais e validação de rotas HTTP com Swagger UI**
 
 - [ ] **Proteção e Autorização de Origem (CORS)**
   * **Conceito:** Liberar o navegador para aceitar requisições do servidor do React apontando para a API do Python.

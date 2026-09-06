@@ -39,7 +39,7 @@ Este documento é o registro de fixação técnica dos conceitos, arquiteturas e
 
 ## 🛡️ 3. Regras de Negócio e Segurança da Aplicação
 
-- [ ] **RN-01 (Acesso Restrito ao Admin)**
+- [] **RN-01 (Acesso Restrito ao Admin)**
   * **Conceito:** Bloquear alterações no MySQL exigindo a validação de um Token JWT enviado via requisição.
   * **OBS:** *[Pendente]*
 

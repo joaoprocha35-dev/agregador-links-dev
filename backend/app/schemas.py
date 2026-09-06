@@ -54,3 +54,10 @@ class Usuario(UsuarioBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+#ensinando ao Pydanti( o viscalizador de requisições) o que esperar do react
+
+#Molde para o React enviar os dados de Login
+class usuarioLogin(BaseModel):
+    email: str
+    senha: str

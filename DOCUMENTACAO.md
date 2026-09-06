@@ -116,9 +116,9 @@ Fase 3: Construção da API (FastAPI)
 
 Fase 4: Segurança & Autenticação
 
-[ ] Hash de senhas com bcrypt.
+[x] Hash de senhas com bcrypt.
 
-[ ] Geração e validação de tokens JWT.
+[x] Geração e validação de tokens JWT.
 
 [ ] Bloqueio das rotas de mutação (POST, PUT, DELETE).
 

@@ -39,19 +39,19 @@ Este documento é o registro de fixação técnica dos conceitos, arquiteturas e
 
 ## 🛡️ 3. Regras de Negócio e Segurança da Aplicação
 
-- [] **RN-01 (Acesso Restrito ao Admin)**
+- [x] **RN-01 (Acesso Restrito ao Admin)**
   * **Conceito:** Bloquear alterações no MySQL exigindo a validação de um Token JWT enviado via requisição.
   * **OBS:** *[Pendente]*
 
-- [ ] **RN-02 (Persistência de Mídia no Cloud Storage)**
+- [] **RN-02 (Persistência de Mídia no Cloud Storage)**
   * **Conceito:** Roteamento de imagens binárias para serviços na nuvem (ex: Cloudinary), gravando no banco MySQL apenas a URL em texto.
   * **OBS:** *[Escreva aqui por que não salvamos imagens dentro da pasta do servidor Python]*
 
-- [ ] **RN-03 (Sessão Expirável)**
+- [x] **RN-03 (Sessão Expirável)**
   * **Conceito:** Definir tempo limite de validade para o Token JWT, forçando novo login por razões de segurança.
   * **OBS:** *[Pendente]*
 
-- [ ] **Criptografia de Senhas (`bcrypt`)**
+- [x] **Criptografia de Senhas (`bcrypt`)**
   * **Conceito:** Transformar senhas brutas em hashes indecifráveis para proteger acessos no banco.
   * **OBS:** *[Pendente]*
 
@@ -59,13 +59,13 @@ Este documento é o registro de fixação técnica dos conceitos, arquiteturas e
 
 ## ⚡ 4. Back-end, API e Comunicação Full-Stack
 
-- [ ] **Rotas RESTful no FastAPI (GET, POST, PUT, DELETE)**
+- [x] **Rotas RESTful no FastAPI (GET, POST, PUT, DELETE)**
   * **Conceito:** Mapear operações de leitura e escrita via protocolo HTTP.
   * **OBS:** *[Pendente]*
 
 - [x] **Testes manuais e validação de rotas HTTP com Swagger UI**
 
-- [ ] **Proteção e Autorização de Origem (CORS)**
+- [x] **Proteção e Autorização de Origem (CORS)**
   * **Conceito:** Liberar o navegador para aceitar requisições do servidor do React apontando para a API do Python.
   * **OBS:** *[Pendente]*
 

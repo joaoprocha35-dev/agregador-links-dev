@@ -1,7 +1,11 @@
+import os
+import cloudinary
+import cloudinary.uploader
+
 #importando o CORS
 from fastapi.middleware.cors import CORSMiddleware
 
-from fastapi import FastAPI, Depends, HTTPException #<-  HTTPException tratar erros de requisição
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File#<-  HTTPException tratar erros de requisição
 
 from fastapi.security import OAuth2PasswordRequestForm #força o FastAPI a usar a ferramenta oficial 
 from sqlalchemy.orm import Session
@@ -10,6 +14,13 @@ from app import models, schemas, database
 #from app.auth import gerar_hash_senha: não precisamos dela pois já códificamos a senha que já foi criada no banco
 
 from app.auth import verificar_senha, criar_token_acesso,obter_usuario_atual
+
+# Configuração do Cloudinary (colocar logo após a criação da variável `app = FastAPI()`)
+cloudinary.config( 
+  cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME"), 
+  api_key = os.getenv("CLOUDINARY_API_KEY"), 
+  api_secret = os.getenv("CLOUDINARY_API_SECRET") 
+)
 
 #cria as tabelas no MySQL automaticamente (se ainda não existirem)
 models.Base.metadata.create_all(bind=database.engine)
@@ -54,7 +65,7 @@ def listar_projetos(db: Session = Depends(get_db)):
     return projetos
 
 
-#Rota para cadastrar um novo projeto no banco de dados
+#Rota protegida para cadastrar um novo projeto no banco de dados
 @app.post('/api/projetos',response_model=schemas.Projeto, status_code=201)
 def cadastrar_projetos(projeto: schemas.ProjetoCreate, db: Session = Depends(get_db),usuario_logado: str = Depends(obter_usuario_atual)): # o usuario_logado é o segurança da porta.
 
@@ -83,9 +94,10 @@ def buscar_projeto(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail=f'Projeto com ID {id} não encontrado')
     return projeto
 
-#Rota para atualizar um projeto específico pelo ID
+#Rota protegida para atualizar um projeto específico pelo ID
 @app.put('/api/projetos/{id}',response_model=schemas.Projeto)
-def atualizar_projeto(id: int, projeto_atualizado: schemas.ProjetoCreate, db: Session = Depends(get_db)):
+def atualizar_projeto(id: int, projeto_atualizado: schemas.ProjetoCreate, db: Session = Depends(get_db), usuario_logado: str = Depends(obter_usuario_atual)): #<- O segurança da porta
+
     #Eu procuro no banco o projeto que o usuário quer editar
     projeto = db.query(models.Projeto).filter(models.Projeto.id == id).first()
 
@@ -104,9 +116,9 @@ def atualizar_projeto(id: int, projeto_atualizado: schemas.ProjetoCreate, db: Se
     db.refresh(projeto)
     return projeto
 
-#Rota para deletar um projeto existente pelo ID
+#Rota protegida para deletar um projeto existente pelo ID
 @app.delete('/api/projetos/{id}', status_code=204)
-def deletar_projeto(id: int, db: Session = Depends(get_db)):
+def deletar_projeto(id: int, db: Session = Depends(get_db), usuario_logado: str = Depends(obter_usuario_atual)):
 
     # Eu procuro o projeto no banco de dados usando o ID da URL
     projeto = db.query(models.Projeto).filter(models.Projeto.id == id).first()
@@ -139,3 +151,18 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
     # Entregaremos o crachá na mão do usuário (react)
     return {'access_token': token, 'token_type': 'bearer'}
+
+#CRIANDO A ROTA DE UPLOAD
+@app.post('/api/upload')
+async def upload_imagem(file:UploadFile = File(...),usuario_logado:str = Depends(obter_usuario_atual)):
+    try:
+        #lê o arquivo de imagem que veio do Front-end
+        conteudo = await file.read()
+
+        #Envia para o Cloudinary (criando uma pasta chamada 'dev_hub' lá)
+        resultado = cloudinary.uploader.upload(conteudo, folder='dev_hub')
+
+        #retorna a URL segura (https) da imagem gerada
+        return {'url': resultado.get('secure_url')}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Erro ao enviar imagem: {str(e)}')

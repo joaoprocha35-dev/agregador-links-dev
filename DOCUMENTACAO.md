@@ -120,7 +120,7 @@ Fase 4: Segurança & Autenticação
 
 [x] Geração e validação de tokens JWT.
 
-[ ] Bloqueio das rotas de mutação (POST, PUT, DELETE).
+[x] Bloqueio das rotas de mutação (POST, PUT, DELETE).
 
 Fase 5: Mídia & Cloud Storage
 
@@ -132,7 +132,7 @@ Fase 6: Integração Full-Stack & Deploy
 
 [ ] Troca de dados estáticos do React por chamadas fetch à API.
 
-[ ] Habilitação de CORS no FastAPI.
+[x] Habilitação de CORS no FastAPI.
 
 [ ] Publicação do Front-end (Vercel) e Back-end (Render).
 

@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 import jwt 
 
 from datetime import datetime, timedelta, timezone
@@ -21,12 +23,11 @@ def gerar_hash_senha(senha: str):
 def verificar_senha(senha_plana: str, senha_hash: str):
     return pwd_context.verify(senha_plana, senha_hash)
 
-#Configurações do JWT (O crachá)
-SECRET_KEY = '09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7' #chave para o meu projeto
-ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 120 #O token dura 2 horas
+#Configurações do JWT (O crachá) do .env
+SECRET_KEY = os.getenv("SECRET_KEY"),#chave para o meu projeto
+ALGORITHM = os.getenv("ALGORITHM", "HS256"),ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 120)) #O token dura 2 horas
 #ensina o FastAPI onde o React deve ir para conseguir um token
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='api/login')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/login')
 
 #Funçao que fabrica o Token
 def criar_token_acesso(dados: dict):

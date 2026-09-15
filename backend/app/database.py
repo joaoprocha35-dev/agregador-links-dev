@@ -1,10 +1,18 @@
 # Importa o criador de conexões e o configurador de sessões da biblioteca SQLAlchemy
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
+# Carrega o arquivo .env
+load_dotenv()
+
+
+# Pega a URL do banco do arquivo .env
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 # String de conexão: define o banco (mysql+pymysql), usuario (root), senha, endereço local e o nome do banco (dev_hub)
 
-DATABASE_URL = "mysql+pymysql://root:Joao.dev30@localhost:3306/dev_hub"
 
 # Cria o motor de comunicação (Engine) que vai abrir os canais de dados com o MySQL
 engine = create_engine(DATABASE_URL)

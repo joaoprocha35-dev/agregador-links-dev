@@ -124,7 +124,7 @@ Fase 4: Segurança & Autenticação
 
 Fase 5: Mídia & Cloud Storage
 
-[ ] Integração com serviço de nuvem (Cloudinary / Supabase).
+[x] Integração com serviço de nuvem (Cloudinary).
 
 [ ] Testes de requisição multipart no Postman/Insomnia.
 

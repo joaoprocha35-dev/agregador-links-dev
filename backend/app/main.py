@@ -5,7 +5,8 @@ import cloudinary.uploader
 #importando o CORS
 from fastapi.middleware.cors import CORSMiddleware
 
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File#<-  HTTPException tratar erros de requisição
+#HTTPException trata erros de requisição
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Response 
 
 from fastapi.security import OAuth2PasswordRequestForm #força o FastAPI a usar a ferramenta oficial 
 from sqlalchemy.orm import Session
@@ -136,8 +137,10 @@ def deletar_projeto(id: int, db: Session = Depends(get_db), usuario_logado: str 
     #EU não devolvo nada para o front-end, apenas o status code 204 que indica que a operação foi bem sucedida e não há conteúdo para retornar
     return None
 
-@app.post('/api/login')
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)): 
+
+#----------------CÓDIGO ANTIGO--------------------
+#@app.post('/api/login')
+#def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)): 
 
     # Isso faz procurar se existe alguém com esse e-mail no banco
     usuario = db.query(models.Usuario).filter(models.Usuario.email == form_data.username).first()
@@ -151,6 +154,50 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
     # Entregaremos o crachá na mão do usuário (react)
     return {'access_token': token, 'token_type': 'bearer'}
+
+#----------------CÓDIGO NOVO----------------
+@app.post('/api/login')
+def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+
+    # Busca o registro do usuário no banco de dados filtrando pelo e-mail.
+    usuario = db.query(models.Usuario).filter(models.Usuario.email == form_data.username).first()
+
+    # Valida as credenciais: verifica se o usuário NÃO existe no banco ou se a senha está incorreta.
+    if not usuario or not verificar_senha(form_data.password, usuario.senha_hash):
+        # Interrompe a requisição e retorna um erro 401 (Não Autorizado) para o cliente.
+        raise HTTPException(status_code=401, detail='E-mail ou senha incorretos. Acesso negado!')
+
+    token = criar_token_acesso(dados={'sub': usuario.email})
+
+    #Em vez de devolver no return, injetamos no Cookie do navegador!
+    response.set_cookie(
+        key='access_token',
+        value=token,
+        httponly=True, #impede que o JavaScript (hackers) leiam o token
+        max_age=120 * 60, #Expira em 2 horas (em segundos)
+        samesite='lax', #Proteção extra contra ataques CSRF
+        secure=False # Em produção (com HTTPS), mude isso para True!
+    )
+    return {"mensagem": "Login realizado com sucesso!"}
+
+#como o token fica no cookie, precisamos de uma rota para o usuário deslogar!
+@app.post('/api/logout')
+def logout(response: Response):
+    #isso destrói o cookie no navegador do usuário
+    response.delete_cookie("access_token")
+    return {"mensagem": "Logout realizado com sucesso!"}
+
+
+
+
+
+
+
+
+
+
+
+
 
 #CRIANDO A ROTA DE UPLOAD
 @app.post('/api/upload')

@@ -1,0 +1,13 @@
+// Estilos de layout da página principal extraídos para CSS Modules
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+.main {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

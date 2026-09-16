@@ -41,11 +41,10 @@ Este documento é o registro de fixação técnica dos conceitos, arquiteturas e
 
 - [x] **RN-01 (Acesso Restrito ao Admin)**
   * **Conceito:** Bloquear alterações no MySQL exigindo a validação de um Token JWT enviado via requisição.
-  * **OBS:** *[Pendente]*
 
 - [] **RN-02 (Persistência de Mídia no Cloud Storage)**
-  * **Conceito:** Roteamento de imagens binárias para serviços na nuvem (ex: Cloudinary), gravando no banco MySQL apenas a URL em texto.
-  * **OBS:** *[Escreva aqui por que não salvamos imagens dentro da pasta do servidor Python]*
+  * **Conceito:** Roteamento de imagens binárias para serviços na nuvem (Cloudinary), gravando no banco MySQL apenas a URL em texto.
+  * **OBS:** *[quando a gente salva imagens ou videos na pasta local do python, elas podem ser perdidas durante deploys,reinicializacao ou mudancas de infraestrutura. O cloudinary é responsável por armazenar midias e salvamos no Mysql apenas a URL de acesso, deixando o banco mais leve e facilitando a escalabilidade e o gerenciamento das mídias.]*
 
 - [x] **RN-03 (Sessão Expirável)**
   * **Conceito:** Definir tempo limite de validade para o Token JWT, forçando novo login por razões de segurança.

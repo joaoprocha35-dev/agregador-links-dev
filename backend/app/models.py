@@ -26,6 +26,7 @@ class Projeto(Base):
     subtitulo = Column(String(200))
     descricao = Column(Text)
     categoria = Column(String(50), nullable=False)
+    status = Column(String(50), nullable=True, default="Em Produção") # <--- Garanta que esta linha existe!
     imagem_url = Column(String(500))
     demo_url = Column(String(500))
     github_url = Column(String(500))

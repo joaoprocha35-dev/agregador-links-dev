@@ -1,19 +1,24 @@
 @use '../../styles/variables' as vars;
 @use '../../styles/mixins' as mix;
 
-// Tokens de design avançados para Glassmorphism de alta fidelidade
-$dark-bg: #030712;
-$glass-surface: rgba(6, 11, 25, 0.65);
-$glass-border: rgba(0, 225, 255, 0.35);
-$glass-border-hover: rgba(0, 225, 255, 0.75);
-$cyan-glow: #00f0ff;
-$cyan-glow-dim: rgba(0, 240, 255, 0.2);
+/* ==========================================================================
+   1. TOKENS DE DESIGN (Baseados na nova referência Blue/Purple)
+   ========================================================================== */
+$bg-main: #0B0E17; /* Fundo geral super escuro e azulado */
+$card-bg: rgba(22, 26, 43, 0.55); /* Fundo do card translúcido */
+$card-border: rgba(255, 255, 255, 0.06); /* Borda de vidro sutil */
+$accent-blue: #3B82F6; /* Azul primário (referência dos botões) */
+$accent-purple: #6366F1; /* Roxo sutil para os gradientes */
+$text-main: #F3F4F6;
+$text-muted: rgba(255, 255, 255, 0.5);
 
-// Animações sutis
+/* ==========================================================================
+   2. ANIMAÇÕES
+   ========================================================================== */
 @keyframes fadeInSlideUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -21,65 +26,88 @@ $cyan-glow-dim: rgba(0, 240, 255, 0.2);
   }
 }
 
-@keyframes ambientPulse {
-  0%, 100% {
-    box-shadow: 0 0 25px rgba(0, 240, 255, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 35px rgba(0, 240, 255, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.35);
-  }
-}
-
-// Estilo Base do Vidro Pro (Igual ao Card de referência)
+/* ==========================================================================
+   3. CLASSE BASE DO VIDRO (Glassmorphism Elegante)
+   ========================================================================== */
 %glassCardPro {
-  background: $glass-surface;
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid $glass-border;
-  border-radius: 24px;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.8),
-    0 0 25px $cyan-glow-dim,
-    inset 0 1px 1px rgba(255, 255, 255, 0.25);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  animation: fadeInSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) ease-out;
+  background: $card-bg;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid $card-border;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  animation: fadeInSlideUp 0.5s ease-out;
+
+  /* O brilho radial suave (Azul/Roxo) dentro dos cards */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 80% 0%, rgba(59, 130, 246, 0.15), transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(99, 102, 241, 0.1), transparent 50%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Mantém o conteúdo à frente do brilho */
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 
   &:hover {
-    border-color: $glass-border-hover;
+    border-color: rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
-    box-shadow: 
-      0 28px 50px rgba(0, 0, 0, 0.9),
-      0 0 38px rgba(0, 240, 255, 0.35),
-      inset 0 1px 2px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
   }
 }
 
-// Container global com iluminação de fundo ambiente
+/* ==========================================================================
+   4. LAYOUT GLOBAL
+   ========================================================================== */
 .adminContainer {
   min-height: 100vh;
-  background-color: $dark-bg;
+  background-color: $bg-main;
+  /* Gradiente de fundo global bem suave */
   background-image: 
-    radial-gradient(circle at 50% -10%, rgba(0, 180, 255, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 100% 100%, rgba(0, 240, 255, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 0% 50%, rgba(10, 25, 50, 0.8) 0%, transparent 60%);
+    radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 40%);
   background-attachment: fixed;
-  color: #ffffff;
+  color: $text-main;
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 
-  // Prioridade Celular -> Ajustes para Desktop
   @media (min-width: 768px) {
-    padding: 28px;
-    gap: 24px;
+    padding: 24px;
+    gap: 20px;
   }
 }
 
-// Topbar estilo Glassmorphism
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (min-width: 960px) {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 20px;
+  }
+}
+
+/* ==========================================================================
+   5. COMPONENTES ESPECÍFICOS
+   ========================================================================== */
+
+/* --- Topbar --- */
 .topbar {
   @extend %glassCardPro;
-  padding: 14px 18px;
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -88,7 +116,6 @@ $cyan-glow-dim: rgba(0, 240, 255, 0.2);
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 28px;
   }
 
   .topbarHeader {
@@ -96,64 +123,46 @@ $cyan-glow-dim: rgba(0, 240, 255, 0.2);
     align-items: center;
     justify-content: space-between;
     width: 100%;
-
-    @media (min-width: 768px) {
-      width: auto;
-    }
+    @media (min-width: 768px) { width: auto; }
   }
 
   .brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.3px;
+    font-weight: 600;
 
-    .cyanIcon {
-      color: $cyan-glow;
-      filter: drop-shadow(0 0 10px $cyan-glow);
-    }
-
-    strong {
-      color: $cyan-glow;
-      text-shadow: 0 0 12px $cyan-glow-dim;
-    }
+    .cyanIcon { color: $accent-blue; }
+    strong { color: #fff; font-weight: 700; }
   }
 
   .searchBox {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 12px 16px;
-    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid $card-border;
+    padding: 10px 16px;
+    border-radius: 20px;
     width: 100%;
-    color: rgba(255, 255, 255, 0.5);
     transition: all 0.3s ease;
 
-    @media (min-width: 768px) {
-      width: 300px;
-    }
+    @media (min-width: 768px) { width: 320px; }
 
     &:focus-within {
-      border-color: $cyan-glow;
-      box-shadow: 0 0 15px $cyan-glow-dim;
-      color: $cyan-glow;
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.4);
     }
 
     input {
       background: transparent;
       border: none;
       outline: none;
-      color: #ffffff;
+      color: $text-main;
       width: 100%;
       font-size: 14px;
-
-      &::placeholder {
-        color: rgba(255, 255, 255, 0.35);
-      }
+      &::placeholder { color: $text-muted; }
     }
   }
 
@@ -161,30 +170,21 @@ $cyan-glow-dim: rgba(0, 240, 255, 0.2);
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255, 60, 60, 0.12);
-    border: 1px solid rgba(255, 60, 60, 0.35);
-    color: #ff6b6b;
-    padding: 10px 18px;
-    border-radius: 12px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #F87171;
+    padding: 10px 20px;
+    border-radius: 20px;
     cursor: pointer;
     font-size: 13px;
     font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.2s;
 
-    &:hover {
-      background: rgba(255, 60, 60, 0.25);
-      border-color: #ff6b6b;
-      box-shadow: 0 0 15px rgba(255, 60, 60, 0.3);
-      transform: translateY(-1px);
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
+    &:hover { background: rgba(239, 68, 68, 0.2); }
   }
 }
 
-// Cards de Métricas em Grid
+/* --- Métricas --- */
 .metricsGrid {
   display: grid;
   grid-template-columns: 1fr;
@@ -197,79 +197,49 @@ $cyan-glow-dim: rgba(0, 240, 255, 0.2);
 
   .metricCard {
     @extend %glassCardPro;
-    padding: 16px 20px;
+    padding: 18px;
     display: flex;
     align-items: center;
     gap: 16px;
 
     .iconWrapper {
-      width: 48px;
-      height: 48px;
-      border-radius: 16px;
-      background: rgba(0, 240, 255, 0.12);
-      border: 1px solid rgba(0, 240, 255, 0.3);
-      color: $cyan-glow;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(59, 130, 246, 0.15);
+      color: $accent-blue;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 16px $cyan-glow-dim;
       flex-shrink: 0;
     }
 
     p {
-      color: rgba(255, 255, 255, 0.55);
-      font-size: 11px;
+      color: $text-muted;
+      font-size: 12px;
       margin: 0;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      font-weight: 600;
+      font-weight: 500;
     }
 
     h3 {
-      font-size: 24px;
-      font-weight: 800;
+      font-size: 22px;
+      font-weight: 700;
       margin: 2px 0 0 0;
-      color: #ffffff;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      color: $text-main;
     }
   }
 }
 
-// Estrutura Principal (Empilhado no Mobile, Lado a Lado no Desktop)
-.mainContent {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-
-  @media (min-width: 960px) {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 24px;
-  }
-}
-
-// Formulário de Cadastro/Edição
+/* --- Formulário (FormCard) --- */
 .formCard {
   @extend %glassCardPro;
   padding: 24px;
 
   h2 {
     font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    &::before {
-      content: '';
-      width: 4px;
-      height: 18px;
-      background: $cyan-glow;
-      border-radius: 2px;
-      box-shadow: 0 0 10px $cyan-glow;
-    }
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: $text-main;
   }
 
   form {
@@ -284,134 +254,100 @@ $cyan-glow-dim: rgba(0, 240, 255, 0.2);
     gap: 8px;
 
     label {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.75);
-      font-weight: 600;
-      letter-spacing: 0.3px;
+      font-size: 13px;
+      color: $text-muted;
     }
 
     input, select, textarea {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      padding: 14px 16px;
-      color: #ffffff;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid $card-border;
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: $text-main;
       outline: none;
       font-size: 14px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.2s ease;
 
       &:focus {
-        border-color: $cyan-glow;
-        background: rgba(0, 240, 255, 0.05);
-        box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        border-color: $accent-blue;
+        background: rgba(0, 0, 0, 0.4);
       }
     }
-
-    select option {
-      background: #060b19;
-      color: #ffffff;
-    }
+    
+    select option { background: #161A2B; }
   }
 
   .formActions {
     display: flex;
     gap: 12px;
-    margin-top: 8px;
+    margin-top: 12px;
 
     .saveBtn {
       flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      height: 48px; // Botão amplo ideal para toque no celular
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(0, 200, 255, 0.3), rgba(0, 240, 255, 0.15));
-      border: 1px solid $cyan-glow;
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 700;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, $accent-blue, $accent-purple);
+      border: none;
+      color: #fff;
+      font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 0 20px $cyan-glow-dim;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.2s;
 
-      &:hover {
-        background: linear-gradient(135deg, rgba(0, 200, 255, 0.5), rgba(0, 240, 255, 0.35));
-        box-shadow: 0 0 28px rgba(0, 240, 255, 0.5);
-        transform: translateY(-2px);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
+      &:hover { opacity: 0.9; }
     }
 
     .cancelBtn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 0 18px;
-      height: 48px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: rgba(255, 255, 255, 0.7);
+      padding: 0 20px;
+      height: 44px;
+      border-radius: 12px;
+      background: transparent;
+      border: 1px solid $card-border;
+      color: $text-muted;
       cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s ease;
+      font-weight: 500;
 
-      &:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: #ffffff;
-      }
+      &:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
     }
   }
 }
 
-// Lista de Projetos
+/* --- Lista de Projetos (ListCard) --- */
 .listCard {
   @extend %glassCardPro;
   padding: 24px;
 
   h2 {
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 20px;
-    color: #ffffff;
   }
 
   .projectsTable {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
-  // Linhas estilizadas com efeito individual de vidro
   .tableRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 18px;
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    gap: 12px;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid transparent;
+    border-radius: 14px;
+    transition: all 0.2s ease;
 
     &:hover {
-      border-color: rgba(0, 240, 255, 0.4);
-      background: rgba(0, 240, 255, 0.04);
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
-      transform: translateX(4px);
+      background: rgba(255, 255, 255, 0.03);
+      border-color: $card-border;
     }
 
     .info {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      min-width: 0;
-
+      
       @media (min-width: 480px) {
         flex-direction: row;
         align-items: center;
@@ -421,69 +357,103 @@ $cyan-glow-dim: rgba(0, 240, 255, 0.2);
       h4 {
         margin: 0;
         font-size: 15px;
-        font-weight: 600;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-weight: 500;
       }
 
       .badge {
-        display: inline-block;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 3px 10px;
+        font-size: 11px;
+        padding: 4px 10px;
         border-radius: 20px;
-        background: rgba(0, 240, 255, 0.12);
-        color: $cyan-glow;
-        border: 1px solid rgba(0, 240, 255, 0.3);
+        background: rgba(59, 130, 246, 0.15);
+        color: $accent-blue;
         width: fit-content;
-        letter-spacing: 0.5px;
       }
     }
 
     .actions {
       display: flex;
       gap: 8px;
-      flex-shrink: 0;
 
       button {
-        width: 40px;
-        height: 40px; // Alvo amplo para toque mobile
-        border-radius: 12px;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         border: none;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.2s;
       }
 
       .editBtn {
-        background: rgba(255, 255, 255, 0.06);
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-
-        &:hover {
-          color: $cyan-glow;
-          border-color: $cyan-glow;
-          background: rgba(0, 240, 255, 0.15);
-          box-shadow: 0 0 12px $cyan-glow-dim;
-          transform: scale(1.05);
-        }
+        background: rgba(255, 255, 255, 0.05);
+        color: $text-muted;
+        &:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
       }
 
       .deleteBtn {
-        background: rgba(255, 60, 60, 0.12);
-        color: #ff6b6b;
-        border: 1px solid rgba(255, 60, 60, 0.25);
-
-        &:hover {
-          background: rgba(255, 60, 60, 0.25);
-          border-color: #ff6b6b;
-          box-shadow: 0 0 12px rgba(255, 60, 60, 0.3);
-          transform: scale(1.05);
-        }
+        background: rgba(239, 68, 68, 0.1);
+        color: #F87171;
+        &:hover { background: rgba(239, 68, 68, 0.2); }
       }
     }
+  }
+}
+
+/* --- Estilos para o botão verde --- */
+.btnVerde {
+  background-color: #10b981 !important; /* Verde bonito */
+  color: #ffffff;
+  border: none;
+  
+  &:hover {
+    background-color: #059669 !important; /* Verde mais escuro no hover */
+  }
+}
+
+/* --- Estilos para corrigir o input de arquivo e a miniatura --- */
+.fileUploadWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fileInput {
+  background-color: transparent;
+  color: #a0aec0;
+  padding: 8px 0;
+  font-family: inherit;
+
+  /* Estiliza o botão feio nativo "Escolher arquivo" */
+  &::file-selector-button {
+    background-color: #2d3748;
+    color: #ffffff;
+    border: 1px solid #4a5568;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 12px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #4a5568;
+    }
+  }
+}
+
+/* Quadrado da miniatura da imagem */
+.imagePreview {
+  width: 120px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #2d3748;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que a imagem preencha o espaço sem amassar */
   }
 }

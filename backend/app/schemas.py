@@ -24,6 +24,7 @@ class ProjetoBase(BaseModel):
     subtitulo: Optional[str] = None
     descricao: Optional[str] = None
     categoria: str
+    status: Optional[str] = "Em Produção"
     imagem_url: Optional[str] = None
     demo_url: Optional[str] = None
     github_url: Optional[str] = None   

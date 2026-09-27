@@ -5,38 +5,54 @@ const AuthContext = createContext();
 
 // 2. Este é o provedor. Ele vai "abraçar" nosso aplicativo e fornecer os dados para todos.
 export const AuthProvider = ({ children }) => {
-  
-  // Estado que guarda se o usuário está logado ou não.
-  // Usamos o localStorage (memória do navegador) para que se o usuário der F5, ele não deslogue.
+//checamos se existe um ZToken salvo
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('@DevHub:auth') === 'true';
-  });
+    return !!localStorage.getItem('@DevHub:token')
+  })
+  //Trasformamos a função em async porque a comunicação com a API pela internet demora  alguns segundos
+  const login = async (email, password) => {
+    try {
+      // 1. Convertendo os dados para o formato de formulário exigido pelo OAuth2
+      const formData = new URLSearchParams();
+      formData.append('username', email); // O FastAPI exige o nome 'username'
+      formData.append('password', password);
 
-  // Função que simula o ato de logar
-  const login = (email, password) => {
-    // Por enquanto, se ele preencher qualquer email e senha, a gente deixa entrar.
-    if (email && password) {
-      localStorage.setItem('@DevHub:auth', 'true'); // Salva no navegador
-      setIsAuthenticated(true); // Atualiza nossa nuvem
-      return true; // Retorna sucesso
+      // 2. Rota corrigida e Content-Type ajustado
+      const response = await fetch('http://localhost:8000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded' 
+        },
+        body: formData,
+      });
+
+      if(response.ok) {
+        const data = await response.json(); 
+        
+        // 3. Corrigido erro de digitação de acess_token para access_token
+        localStorage.setItem('@DevHub:token', data.access_token);
+        setIsAuthenticated(true);
+        return true;
+      }
+      return false;
+    }catch(error){
+      console.error('Erro ao tentar conectar na API:', error);
+      return false;
     }
-    return false;
   };
 
-  // Função para sair (logout)
   const logout = () => {
-    localStorage.removeItem('@DevHub:auth'); // Limpa a memória do navegador
-    setIsAuthenticated(false); // Atualiza a nuvem para falso
-  };
+    localStorage.removeItem('@DevHub:token'); // joga o crachá VIP no lixo
+    setIsAuthenticated(false);
+  }
 
-  // 3. Aqui disponibilizamos as funções e o status para quem quiser usar
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+  return(
+    <AuthContext.Provider value={{isAuthenticated, login, logout}}>
       {children}
     </AuthContext.Provider>
   );
+
 };
 
-// 4. Criamos um "atalho" (Hook customizado) para facilitar na hora de usar essa nuvem nas telas.
-// eslint-disable-next-line react-refresh/only-export-components
+//eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);

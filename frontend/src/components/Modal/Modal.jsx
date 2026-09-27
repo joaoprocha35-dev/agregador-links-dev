@@ -1,9 +1,9 @@
-// Importo os ícones utilitários da Lucide, a pílula visual reutilizável de Badge e os estilos isolados
+import { useEffect, useState } from "react";
 import { X, ExternalLink, Code } from "lucide-react";
 import { Badge } from "../UI/Badge";
 import styles from "./Modal.module.scss";
 
-// Construí este elemento vetorial para desenhar o símbolo circular do WhatsApp sem depender de pacotes externos
+// Componente para renderizar o ícone vetorial do WhatsApp no botão de orçamento
 const WhatsAppIcon = ({ size = 16, className }) => (
   <svg
     width={size}
@@ -16,31 +16,75 @@ const WhatsAppIcon = ({ size = 16, className }) => (
   </svg>
 );
 
-// Mapeio os textos dos botões principais combinando exatamente com as chaves do meu arquivo de dados
+// Dicionário com os textos do botão de ação principal de acordo com o ID do card clicado
 const ROTULOS_BOTAO_PRINCIPAL = {
   b2b: "Ver Site",
   autorais: "Ver Projeto",
   prototipos: "Ver Demo",
 };
 
-// Declaro o modal recebendo os estados de controle e o objeto da categoria selecionada
+// Dicionário que traduz o "ID do card" para o nome exato do STATUS salvo no MySQL
+const STATUS_MAPEAMENTO = {
+  b2b: "Em Produção",
+  autorais: "Projetos Autorais",
+  prototipos: "Protótipos",
+};
+
 export const Modal = ({ isOpen, onClose, categoriaAtiva }) => {
-  // Interrompo a renderização imediatamente se o painel estiver fechado ou sem informações
+  // Estado local para guardar a lista de projetos retornada pelo FastAPI
+  const [projetosApi, setProjetosApi] = useState([]);
+  // Estado para controlar a mensagem visual de "Carregando..." enquanto a requisição roda
+  const [carregando, setCarregando] = useState(false);
+
+ // Hook executado sempre que o Modal for aberto (isOpen muda) ou o card clicado trocar (categoriaAtiva)
+  useEffect(() => {
+    // Só faz a busca se o modal estiver aberto e houver uma categoria válida selecionada
+    if (!isOpen || !categoriaAtiva) return;
+
+    // Função assíncrona interna para buscar os dados
+    const buscarProjetos = async () => {
+      setCarregando(true); // Ativa o aviso de carregando
+
+      try {
+        const resposta = await fetch("http://localhost:8000/api/projetos");
+        const listaCompleta = await resposta.json();
+
+        // Identifica qual o status no banco que corresponde a este modal
+        const statusEsperado = STATUS_MAPEAMENTO[categoriaAtiva.id];
+
+        // Filtra a lista completa trazendo apenas os projetos com o mesmo status
+        const projetosFiltrados = listaCompleta.filter(
+          (projeto) =>
+            projeto.status?.toLowerCase() === statusEsperado?.toLowerCase()
+        );
+
+        setProjetosApi(projetosFiltrados);
+      } catch (erro) {
+        console.error("Erro ao buscar projetos da API:", erro);
+      } finally {
+        setCarregando(false); // Desativa o aviso de carregando
+      }
+    };
+
+    buscarProjetos();
+  }, [isOpen, categoriaAtiva]);
+
+  // Se o modal não estiver visível ou não tiver categoria definida, não renderiza nada no DOM
   if (!isOpen || !categoriaAtiva) return null;
 
-  // Resgato o rótulo dinâmico correspondente ao ID atual e defino um valor padrão de garantia
+  // Seleciona o rótulo do botão principal de acordo com a categoria selecionada
   const textoBotaoPrincipal =
     ROTULOS_BOTAO_PRINCIPAL[categoriaAtiva.id] || "Ver Demo";
 
   return (
-    // Desenho a camada escura de fundo e vinculo o fechamento ao clicar fora da caixa
+    // Overlay de fundo escuro com fecho ao clicar fora do conteúdo
     <div className={styles.overlay} onClick={onClose}>
-      {/* Criei este contêiner flutuante injetando a classe de cor tema e bloqueando a propagação de cliques */}
+      {/* Container principal do Modal - e.stopPropagation impede o clique interno de fechar o modal */}
       <div
         className={`${styles.bottomSheet} ${styles[categoriaAtiva.corTema]}`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Adiciono o acionador para fechar a interface manualmente */}
+        {/* Botão X para fechar */}
         <button
           className={styles.closeButton}
           onClick={onClose}
@@ -49,73 +93,90 @@ export const Modal = ({ isOpen, onClose, categoriaAtiva }) => {
           <X size={20} />
         </button>
 
-        {/* Exibo o cabeçalho informativo extraído da categoria */}
+        {/* Cabeçalho do Modal dinâmico com título e subtítulo da categoria */}
         <div className={styles.header}>
-          <h2>{categoriaAtiva.modalInfo.tituloModal}</h2>
-          <p>{categoriaAtiva.modalInfo.subtituloModal}</p>
+          <h2>{categoriaAtiva.modalInfo?.tituloModal}</h2>
+          <p>{categoriaAtiva.modalInfo?.subtituloModal}</p>
         </div>
 
-        {/* Percorro o array de projetos cadastrados para gerar os cartões individuais */}
-        {categoriaAtiva.modalInfo.projetos.map((projeto) => (
-          <article key={projeto.id} className={styles.projetoItem}>
-            <img
-              src={projeto.imagem}
-              alt={projeto.nome}
-              className={styles.imagem}
-            />
+        {/* CONDICIONAL 1: Exibe aviso enquanto a API responde */}
+        {carregando ? (
+          <div style={{ padding: "24px 0", textAlign: "center", color: "rgba(255,255,255,0.5)" }}>
+            <p>Carregando projetos...</p>
+          </div>
+        ) : 
+        /* CONDICIONAL 2: Exibe mensagem se não houver projetos cadastrados para este status */
+        projetosApi.length === 0 ? (
+          <div style={{ padding: "24px 0", textAlign: "center", color: "rgba(255,255,255,0.5)" }}>
+            <p>Nenhum projeto cadastrado nesta categoria no momento.</p>
+          </div>
+        ) : (
+          /* CONDICIONAL 3: Mapeia e renderiza cada projeto retornado do banco de dados */
+          projetosApi.map((projeto) => (
+            <article key={projeto.id} className={styles.projetoItem}>
+              {/* Imagem enviada via Cloudinary (se existir) */}
+              {projeto.imagem_url && (
+                <img
+                  src={projeto.imagem_url}
+                  alt={projeto.titulo}
+                  className={styles.imagem}
+                />
+              )}
 
-            <div className={styles.conteudo}>
-              <h3>{projeto.nome}</h3>
+              <div className={styles.conteudo}>
+                {/* Título do Projeto do MySQL */}
+                <h3>{projeto.titulo}</h3>
 
-              {/* Transformo o array de tecnologias em marcas visuais customizadas */}
-              <div className={styles.tags}>
-                {projeto.tags.map((tag, index) => (
-                  <Badge key={index} variant={categoriaAtiva.corTema}>
-                    {tag}
+                {/* Badge da Categoria/Stack */}
+                <div className={styles.tags}>
+                  <Badge variant={categoriaAtiva.corTema}>
+                    {projeto.categoria}
                   </Badge>
-                ))}
+                </div>
+
+                {/* Botões de links externos do projeto */}
+                <div className={styles.botoes}>
+                  {/* Link da Demonstração/Site (demo_url) */}
+                  {projeto.demo_url && (
+                    <a
+                      href={projeto.demo_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.btnPrincipal}
+                    >
+                      <ExternalLink size={16} /> {textoBotaoPrincipal}
+                    </a>
+                  )}
+
+                  {/* Link do Repositório GitHub (github_url) */}
+                  {projeto.github_url && (
+                    <a
+                      href={projeto.github_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Code size={16} /> Código
+                    </a>
+                  )}
+
+                  {/* Botão do WhatsApp ativo apenas para serviços B2B */}
+                  {categoriaAtiva.id === "b2b" && (
+                    <a
+                      href={`https://wa.me/5511999999999?text=Olá,%20tenho%20interesse%20no%20projeto%20${encodeURIComponent(
+                        projeto.titulo
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.whatsapp}
+                    >
+                      <WhatsAppIcon size={16} /> Solicitar Orçamento
+                    </a>
+                  )}
+                </div>
               </div>
-
-              {/* Agrupo os hiperlinks de ação do projeto */}
-              <div className={styles.botoes}>
-                {/* Renderizo o botão primário estilizado conforme a categoria */}
-                {projeto.linkSite && (
-                  <a
-                    href={projeto.linkSite}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.btnPrincipal}
-                  >
-                    <ExternalLink size={16} /> {textoBotaoPrincipal}
-                  </a>
-                )}
-
-                {/* Exibo a opção de código-fonte quando o repositório estiver disponível */}
-                {projeto.linkCodigo && (
-                  <a
-                    href={projeto.linkCodigo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Code size={16} /> Código
-                  </a>
-                )}
-
-                {/* Direciono para o contato do WhatsApp usando meu novo ícone circular */}
-                {projeto.linkWhatsApp && (
-                  <a
-                    href={projeto.linkWhatsApp}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.whatsapp}
-                  >
-                    <WhatsAppIcon size={16} /> Solicitar Orçamento
-                  </a>
-                )}
-              </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))
+        )}
       </div>
     </div>
   );
